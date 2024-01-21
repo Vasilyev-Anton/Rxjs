@@ -6,7 +6,7 @@ import {
 } from 'rxjs/operators';
 
 const messagesContainer = document.querySelector('.content-messages');
-const apiUrl = 'https://rxjs-backend.vercel.app/';
+const apiUrl = 'https://rxjs-backend-mb9z64egg-ants-projects-edd85abf.vercel.app/';
 
 const messageWidget = interval(5000).pipe(
   switchMap(() => ajax.getJSON(apiUrl).pipe(
