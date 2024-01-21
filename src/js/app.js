@@ -1,13 +1,12 @@
 // js/app.js
-const ajax = require('rxjs/ajax');
-const interval = require('rxjs');
-const switchMap = require('rxjs/operators');
-const catchError = require('rxjs/operators');
-const take = require('rxjs/operators');
-const repeat = require('rxjs/operators');
+import { ajax } from 'rxjs/ajax';
+import { interval } from 'rxjs';
+import {
+  switchMap, catchError, take, repeat,
+} from 'rxjs/operators';
 
 const messagesContainer = document.querySelector('.content-messages');
-const apiUrl = 'https://vercel.com/ants-projects-edd85abf/rxjs-backend/2yftHDpRbyfJ47qLipy2cQ7vbnn1/';
+const apiUrl = 'https://rxjs-backend-mb9z64egg-ants-projects-edd85abf.vercel.app/';
 
 const messageWidget = interval(5000).pipe(
   switchMap(() => ajax.getJSON(`${apiUrl}messages/unread`).pipe(
