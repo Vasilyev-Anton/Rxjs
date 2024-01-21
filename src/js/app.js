@@ -6,7 +6,7 @@ import {
 } from 'rxjs/operators';
 
 const messagesContainer = document.querySelector('.content-messages');
-const apiUrl = 'https://rxjs-backend-mb9z64egg-ants-projects-edd85abf.vercel.app/';
+const apiUrl = 'https://vercel.com/ants-projects-edd85abf/rxjs-backend/2yftHDpRbyfJ47qLipy2cQ7vbnn1/';
 
 const messageWidget = interval(5000).pipe(
   switchMap(() => ajax.getJSON(`${apiUrl}messages/unread`).pipe(
