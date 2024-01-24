@@ -1,23 +1,12 @@
-/* eslint-disable no-console */
-/* eslint-disable import/no-extraneous-dependencies */
-// app.js
-const express = require('express');
-const cors = require('cors');
-const { faker } = require('@faker-js/faker');
-const { ajax } = require('rxjs/ajax');
-const { interval } = require('rxjs');
-const {
+// js/app.js
+import { ajax } from 'rxjs/ajax';
+import { interval } from 'rxjs';
+import {
   switchMap, catchError, take, repeat,
-} = require('rxjs/operators');
-
-const app = express();
-const port = process.env.PORT || 3000;
-
-app.use(express.json());
-app.use(cors({ origin: '*' }));
+} from 'rxjs/operators';
 
 const messagesContainer = document.querySelector('.content-messages');
-const apiUrl = 'https://rxjs-backend-4tul8b5x1-ants-projects-edd85abf.vercel.app/';
+const apiUrl = 'https://rxjs-backend111-jc993vxl8-ants-projects-edd85abf.vercel.app/';
 
 const messageWidget = interval(5000).pipe(
   switchMap(() => ajax.getJSON(`${apiUrl}messages/unread`).pipe(
@@ -38,37 +27,23 @@ const formatTimestamp = (received) => {
   return `${hours}:${minutes} ${day}.${month}.${year}`;
 };
 
-const appendMessageToContainer = (message) => {
-  const formattedDate = formatTimestamp(message.received);
-  const truncatedSubject = truncateSubject(message.subject);
-  const messageRow = `<div class="message"><span>${message.from}</span><span>${truncatedSubject}</span><span>${formattedDate}</span></div>`;
-  messagesContainer.insertAdjacentHTML('beforeend', messageRow);
-};
-
-app.get('/messages/unread', (req, res) => {
-  const generateFakeMessage = () => ({
-    id: faker.string.uuid(),
-    from: faker.internet.email(),
-    subject: faker.lorem.words(3),
-    body: faker.lorem.paragraph(),
-    received: Math.floor(Date.now() / 1000),
+const appendMessagesToContainer = (messages) => {
+  messages.forEach((message) => {
+    const formattedDate = formatTimestamp(message.received);
+    const truncatedSubject = truncateSubject(message.subject);
+    const messageRow = `<div class="message"><span>${message.from}</span><span>${truncatedSubject}</span><span>${formattedDate}</span></div>`;
+    messagesContainer.insertAdjacentHTML('beforeend', messageRow);
   });
-
-  const fakeMessages = Array.from({ length: 1 }, generateFakeMessage);
-  const response = { status: 'ok', messages: fakeMessages };
-  res.json(response);
-});
+};
 
 messageWidget.subscribe({
   next: (response) => {
     const newMessages = response.status === 'ok' ? response.messages : [];
-    newMessages.forEach((message) => appendMessageToContainer(message));
+    appendMessagesToContainer(newMessages);
   },
   error: (error) => {
+    // eslint-disable-next-line no-console
     console.error('Произошла ошибка:', error);
+    appendMessagesToContainer([]);
   },
-});
-
-app.listen(port, () => {
-  console.log('Сервер запущен на порту:', `${port}`);
 });
